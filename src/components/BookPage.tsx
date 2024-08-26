@@ -22,7 +22,7 @@ export const BookPage: React.FC<Props> = () => {
         const response = await axios.get(`${BASE_URL}/${params.id}`, {
           headers: {
             Accept: "application/json",
-            "x-api-key": "a24070b0ee634f2894ceb1eb20ec9582",
+            "x-api-key": "e7d7090fc7df4c3b8c98ccb7460fee49",
           },
         })
 

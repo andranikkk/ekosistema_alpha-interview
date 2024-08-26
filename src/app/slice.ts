@@ -9,7 +9,7 @@ export const getBooks = createAsyncThunk("books/getBooks", async () => {
     const resp = await axios.get(`${BASE_URL}/search-books?number=35`, {
       headers: {
         Accept: "application/json",
-        "x-api-key": "a24070b0ee634f2894ceb1eb20ec9582",
+        "x-api-key": "e7d7090fc7df4c3b8c98ccb7460fee49",
       },
     })
 
