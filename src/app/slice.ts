@@ -9,11 +9,16 @@ export const getBooks = createAsyncThunk("books/getBooks", async () => {
     const resp = await axios.get(`${BASE_URL}/search-books?number=35`, {
       headers: {
         Accept: "application/json",
-        "x-api-key": "e7d7090fc7df4c3b8c98ccb7460fee49",
+        "x-api-key": "a24070b0ee634f2894ceb1eb20ec9582",
       },
     })
 
-    return resp.data
+    return resp.data.books.flatMap((book: any) =>
+      book.map((inBook: Omit<Book, "liked">) => ({
+        ...inBook,
+        liked: false,
+      })),
+    )
   } catch (error) {
     console.error("Error fetching books", error)
     throw error
@@ -35,20 +40,12 @@ export const booksSlice = createSlice({
       state.books = action.payload
       state.likedBooks = state.books.filter(book => book.liked)
     },
-    toggleLike(state, { payload: likedBook }: PayloadAction<Book>) {
-      const favoriteBook = state.books.find(book => book.id === likedBook.id)
+    toggleLike(state, { payload }: PayloadAction<Book>) {
+      state.books = state.books.map(book =>
+        book.id === payload.id ? { ...book, liked: !book.liked } : book,
+      )
 
-      if (favoriteBook) {
-        favoriteBook.liked = !favoriteBook.liked
-
-        if (favoriteBook.liked) {
-          state.likedBooks.push(favoriteBook)
-        } else {
-          state.likedBooks = state.likedBooks.filter(
-            book => book.id !== likedBook.id,
-          )
-        }
-      }
+      state.likedBooks = state.books.filter(book => book.liked)
     },
     toggleShowLiked(state) {
       state.showLiked = !state.showLiked
@@ -65,11 +62,13 @@ export const booksSlice = createSlice({
       .addCase(getBooks.pending, state => {
         state.isLoading = true
       })
+
       .addCase(getBooks.fulfilled, (state, action) => {
         state.isLoading = false
-        state.books = action.payload.books
+        state.books = action.payload.flat()
         state.likedBooks = state.books.filter(book => book.liked)
       })
+
       .addCase(getBooks.rejected, state => {
         state.isLoading = false
       })

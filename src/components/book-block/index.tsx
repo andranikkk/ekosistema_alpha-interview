@@ -21,6 +21,8 @@ export const BookBlock: React.FC<IBook> = ({ book, onLike, onDelete }) => {
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation()
 
+    // console.log(book.title, "book.liked")
+
     setIsLiked(!isLiked)
 
     onLike(book)
